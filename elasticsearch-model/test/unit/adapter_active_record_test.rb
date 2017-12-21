@@ -61,6 +61,16 @@ class Elasticsearch::Model::AdapterActiveRecordTest < Test::Unit::TestCase
         instance.records
       end
 
+      should "load the records with its submodels when using :preload" do
+        klass    = mock('class', primary_key: :some_key, where: @records)
+        @records.expects(:preload).with([:submodel]).at_least_once
+
+        instance = DummyClassForActiveRecord.new
+        instance.expects(:klass).returns(klass).at_least_once
+        instance.options[:preload] = [:submodel]
+        instance.records
+      end
+
       should "reorder the records based on hits order" do
         @records.instance_variable_set(:@records, @records)
 

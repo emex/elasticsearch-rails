@@ -332,6 +332,20 @@ module Elasticsearch
           assert records.first.association(:post).loaded?, "The associated Post should be eagerly loaded"
           assert_equal 'One', records.first.post.title
         end
+
+        should "eagerly load associated records using preload" do
+          post_1 = Post.create(title: 'One')
+          post_2 = Post.create(title: 'Two')
+          post_1.comments.create text: 'First comment'
+          post_1.comments.create text: 'Second comment'
+
+          Comment.__elasticsearch__.refresh_index!
+
+          records = Comment.search('first').records(preload: :post)
+
+          assert records.first.association(:post).loaded?, "The associated Post should be eagerly loaded"
+          assert_equal 'One', records.first.post.title
+        end
       end
 
     end

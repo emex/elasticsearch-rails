@@ -21,6 +21,7 @@ module Elasticsearch
           def records
             sql_records = klass.where(klass.primary_key => ids)
             sql_records = sql_records.includes(self.options[:includes]) if self.options[:includes]
+            sql_records = sql_records.preload(self.options[:preload]) if self.options[:preload]
 
             # Re-order records based on the order from Elasticsearch hits
             # by redefining `to_a`, unless the user has called `order()`
